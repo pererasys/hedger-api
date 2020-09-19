@@ -2,6 +2,8 @@
 
 ### Install dependencies
 
+Python 3.8 required.
+
 Run the following commands in the root project directory.
 
 Install pipenv
