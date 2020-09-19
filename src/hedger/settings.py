@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     # applications
     'users',
     'assets',
-    'positions',
 ]
 
 MIDDLEWARE = [
