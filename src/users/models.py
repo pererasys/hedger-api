@@ -68,7 +68,8 @@ class UserAccount(AbstractBaseUser):
         return self.email
 
     def get_short_name(self):
-        if (self.first_name) return self.first_name
+        if self.first_name != "":
+             return self.first_name
         return self.email
 
     def get_full_name(self):
