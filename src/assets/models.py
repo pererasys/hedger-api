@@ -13,7 +13,6 @@ class Asset(models.Model):
     exchange = models.CharField(max_length=50, blank=True)
     display_name = models.CharField(max_length=255)
 
-
     class Meta:
         verbose_name = "asset"
         verbose_name_plural = "assets"
@@ -35,3 +34,10 @@ class DailyReport(models.Model):
     adj_close = models.DecimalField(max_digits=9, decimal_places=2)
     adj_volume = models.IntegerField()
     date = models.DateTimeField(default=datetime.now)
+
+    class Meta:
+        verbose_name = "daily report"
+        verbose_name_plural = "daily reports"
+
+    def __str__(self):
+        return f'{self.asset} - {datetime.strftime(self.date, "%m-%d-%Y")}'
