@@ -23,6 +23,9 @@ class Asset(models.Model):
 class DailyReport(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="reports")
+    date = models.DateTimeField(default=datetime.now)
+
+    # EOD data
     open = models.DecimalField(max_digits=9, decimal_places=2)
     high = models.DecimalField(max_digits=9, decimal_places=2)
     low = models.DecimalField(max_digits=9, decimal_places=2)
@@ -33,7 +36,11 @@ class DailyReport(models.Model):
     adj_low = models.DecimalField(max_digits=9, decimal_places=2)
     adj_close = models.DecimalField(max_digits=9, decimal_places=2)
     adj_volume = models.IntegerField()
-    date = models.DateTimeField(default=datetime.now)
+
+    # Indicators
+    ema = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    macd = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    rsi = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
     class Meta:
         verbose_name = "daily report"
