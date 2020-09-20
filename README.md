@@ -38,19 +38,19 @@ pipenv shell
 pipenv install
 ```
 
-### Running the server
-
-```
-./src/manage.py runserver
-```
-
 ### Database migrations
 
 Run the following commands in the root project directory.
 
 ```
-./src/manage.py makemigrations
-./src/manage.py migrate
+./manage.py makemigrations
+./manage.py migrate
+```
+
+### Running the server
+
+```
+./manage.py runserver
 ```
 
 ### Create user to access admin portal
@@ -58,5 +58,5 @@ Run the following commands in the root project directory.
 Run the following command, and fill in your user information when prompted.
 
 ```
-./src/manage.py createsuperuser
+./manage.py createsuperuser
 ```
