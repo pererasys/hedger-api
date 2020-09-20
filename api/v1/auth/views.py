@@ -20,11 +20,18 @@ class LoginView(APIView):
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data, context={'request': request})
+
+        # Throw errors if login failed
         serializer.is_valid(raise_exception=True)
 
-        user = serializer.validated_data
-
-        token, created = Token.objects.get_or_create(user=user)
-
+        token, created = Token.objects.get_or_create(user=serializer.validated_data)
         token_serializer = TokenSerializer(instance=token)
+
         return Response(token_serializer.data, status=status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+
+    def post(self, request):
+        request.auth.delete()
+        return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
