@@ -1,16 +1,18 @@
 from users.models import UserAccount
-from django.shortcuts import get_object_or_404
 from .serializers import UserSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import permission_classes
 
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
-
+    
+    @permission_classes([AllowAny])
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:

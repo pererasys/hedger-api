@@ -1,7 +1,10 @@
 from rest_framework import serializers, exceptions
-from users.models import UserAccount
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth import get_user_model, authenticate
 
 # function -> change the way data is represented
+
+UserAccount = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -9,8 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     first_name = serializers.CharField(max_length=50, allow_blank=True)
     last_name = serializers.CharField(max_length=50, allow_blank=True)
-    password = serializers.CharField(write_only=True)
-    confirm_password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'})
+    confirm_password = serializers.CharField(write_only=True, style={'input_type': 'password'})
 
     class Meta:
         model = UserAccount
@@ -23,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
         confirm_password = validated_data.get('confirm_password')
 
         if password != confirm_password:
-            raise exceptions.ValidationError("Your passwords must match.")
+            raise exceptions.ValidationError(_("Your passwords must match."))
 
         return validated_data
 

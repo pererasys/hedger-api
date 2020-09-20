@@ -4,6 +4,7 @@ Copyright 2020
 '''
 
 from django.db import models
+from django.utils.timezone import now
 from datetime import datetime
 import uuid
 
@@ -23,7 +24,7 @@ class Asset(models.Model):
 class DailyReport(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="reports")
-    date = models.DateTimeField(default=datetime.now)
+    date = models.DateTimeField(default=now)
 
     # EOD data
     open = models.DecimalField(max_digits=9, decimal_places=2)

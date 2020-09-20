@@ -5,7 +5,7 @@ Copyright 2020
 
 
 from django.db import models
-from django.urls import reverse
+from django.utils.timezone import now
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import uuid
 
@@ -81,6 +81,10 @@ class UserAccount(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    def update_last_login(self):
+        self.last_login = now()
+        self.save()
 
     @property
     def is_active(self):
