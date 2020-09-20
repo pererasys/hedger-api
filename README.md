@@ -59,3 +59,24 @@ Run the following command, and fill in your user information when prompted.
 ```
 ./manage.py createsuperuser
 ```
+
+
+### Using Docker
+
+A sample docker-compose configuration can be found below.
+
+```
+  api:
+    build: [BUILD_DIRECTORY]
+    ports:
+      - 8000:8000
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=somesupersecretkey
+      - DB_NAME=
+      - DB_USERNAME=
+      - DB_PASSWORD=
+      - DB_HOST=
+      - DB_PORT=
+    restart: always
+```
