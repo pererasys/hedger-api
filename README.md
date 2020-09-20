@@ -43,7 +43,6 @@ pipenv install
 Run the following commands in the root project directory.
 
 ```
-./manage.py makemigrations
 ./manage.py migrate
 ```
 
