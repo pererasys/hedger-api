@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import UserViewSet
+from .views import CreateUserView
 
 # defining the endpoint
 urlpatterns = [
     path(
-        "create/", UserViewSet.as_view({"post": "create"}), name="create-user")
+        "create/", CreateUserView.as_view(), name="create-user")
 ]
