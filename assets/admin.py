@@ -4,7 +4,7 @@ Copyright 2020
 '''
 
 from django.contrib import admin
-from .models import Exchange, Asset, DailyReport
+from .models import Exchange, Asset, Report
 
 class ExchangeAdmin(admin.ModelAdmin):
     list_display = ['name', 'acronym', 'total_assets']
@@ -23,4 +23,4 @@ class AssetAdmin(admin.ModelAdmin):
 
 admin.site.register(Exchange, ExchangeAdmin)
 admin.site.register(Asset, AssetAdmin)
-admin.site.register(DailyReport)
+admin.site.register(Report)

@@ -37,7 +37,7 @@ class Asset(models.Model):
 
 
 
-class DailyReport(models.Model):
+class Report(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="reports")
 
@@ -57,13 +57,13 @@ class DailyReport(models.Model):
     ema = models.DecimalField(max_digits=9, decimal_places=2, null=True)
     macd = models.DecimalField(max_digits=9, decimal_places=2, null=True)
     rsi = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    
-    date = models.DateTimeField(default=now)
+
+    timestamp = models.DateTimeField()
 
     class Meta:
         verbose_name = "daily report"
         verbose_name_plural = "daily reports"
-        unique_together = ['asset', 'date']
+        unique_together = ['asset', 'timestamp']
 
     def __str__(self):
-        return f'{self.asset} - {datetime.strftime(self.date, "%m-%d-%Y")}'
+        return f'{self.asset} {datetime.strftime(self.timestamp, "%m-%d-%Y")}'
