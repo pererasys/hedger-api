@@ -80,5 +80,8 @@ A sample docker-compose configuration can be found below.
       - DB_PASSWORD=
       - DB_HOST=
       - DB_PORT=
+      - REDIS_HOST=
+      - REDIS_PORT=
+      - MARKETSTACK_ACCESS_KEY=
     restart: always
 ```
