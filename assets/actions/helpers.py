@@ -53,7 +53,7 @@ def transform_report(report):
         "adj_high": report.get('open', None),
         "adj_close": report.get('adj_close', None),
         "adj_volume": report.get('adj_volume', None),
-        "date": datetime.strptime(report.get('date', default_date), "%Y-%m-%dT%H:%M:%S%z")
+        "timestamp": datetime.strptime(report.get('date', default_date), "%Y-%m-%dT%H:%M:%S%z")
     }
     return Report(**data)
 
