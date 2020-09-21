@@ -1,5 +1,7 @@
 # Hedger API
 
+Hedger performs stock analysis on companies to predict future performance. This Django application serves as an API for the data we process, which allows users to monitor technical indicators and performance ratings we attach to each asset.
+
 ### Environment Setup
 
 Python 3.8 required.
