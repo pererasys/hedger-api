@@ -10,13 +10,9 @@ import uuid
 
 
 class Exchange(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
+    mic = models.CharField(max_length=10, unique=True, primary_key=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
     acronym = models.CharField(max_length=100, unique=True)
-    mic = models.CharField(max_length=10, unique=True)
-    country = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
-    website = models.CharField(max_length=255)
 
     class Meta:
         verbose_name = "exchange"
@@ -27,18 +23,17 @@ class Exchange(models.Model):
 
 
 class Asset(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    symbol = models.CharField(primary_key=True, max_length=10, unique=True)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE, related_name="assets")
-
-    name = models.CharField(max_length=255)
-    symbol = models.CharField(max_length=10, unique=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    active = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "asset"
         verbose_name_plural = "assets"
 
     def __str__(self):
-        return self.name
+        return self.symbol
 
 
 
@@ -52,11 +47,11 @@ class DailyReport(models.Model):
     low = models.DecimalField(max_digits=9, decimal_places=2)
     close = models.DecimalField(max_digits=9, decimal_places=2)
     volume = models.IntegerField()
-    adj_open = models.DecimalField(max_digits=9, decimal_places=2)
-    adj_high = models.DecimalField(max_digits=9, decimal_places=2)
-    adj_low = models.DecimalField(max_digits=9, decimal_places=2)
-    adj_close = models.DecimalField(max_digits=9, decimal_places=2)
-    adj_volume = models.IntegerField()
+    adj_open = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    adj_high = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    adj_low = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    adj_close = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    adj_volume = models.IntegerField(null=True)
 
     # Indicators
     ema = models.DecimalField(max_digits=9, decimal_places=2, null=True)
