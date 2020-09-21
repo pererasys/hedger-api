@@ -8,23 +8,43 @@ from django.utils.timezone import now
 from datetime import datetime
 import uuid
 
+
+class Exchange(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    acronym = models.CharField(max_length=100, unique=True)
+    mic = models.CharField(max_length=10, unique=True)
+    country = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    website = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = "exchange"
+        verbose_name_plural = "exchanges"
+
+    def __str__(self):
+        return self.name
+
+
 class Asset(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE, related_name="assets")
+
+    name = models.CharField(max_length=255)
     symbol = models.CharField(max_length=10, unique=True)
-    exchange = models.CharField(max_length=50, blank=True)
-    display_name = models.CharField(max_length=255)
 
     class Meta:
         verbose_name = "asset"
         verbose_name_plural = "assets"
 
     def __str__(self):
-        return self.display_name
+        return self.name
+
+
 
 class DailyReport(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="reports")
-    date = models.DateTimeField(default=now)
 
     # EOD data
     open = models.DecimalField(max_digits=9, decimal_places=2)
@@ -42,10 +62,13 @@ class DailyReport(models.Model):
     ema = models.DecimalField(max_digits=9, decimal_places=2, null=True)
     macd = models.DecimalField(max_digits=9, decimal_places=2, null=True)
     rsi = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    
+    date = models.DateTimeField(default=now)
 
     class Meta:
         verbose_name = "daily report"
         verbose_name_plural = "daily reports"
+        unique_together = ['asset', 'date']
 
     def __str__(self):
         return f'{self.asset} - {datetime.strftime(self.date, "%m-%d-%Y")}'

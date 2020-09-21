@@ -10,6 +10,8 @@ django = "*"
 djangorestframework = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
+celery = {extras = ["redis"], version = "*"}
+requests = "*"
 
 [requires]
 python_version = "3.8"

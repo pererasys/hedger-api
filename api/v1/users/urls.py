@@ -4,6 +4,5 @@ from .views import CreateUserView
 
 # defining the endpoint
 urlpatterns = [
-    path(
-        "create/", CreateUserView.as_view(), name="create-user")
+    path("create/", CreateUserView.as_view(), name="create-user")
 ]

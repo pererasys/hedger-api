@@ -14,17 +14,19 @@ In the file you just created, you will need to include the following:
 
 ```
 # REQUIRED
-export DEBUG=True/False
-export SECRET_KEY=some_secret_key
+export DEBUG=     # True/False
+export SECRET_KEY=
+export REDIS_HOST=
+export REDIS_PORT=
+export MARKETSTACK_ACCESS_KEY=
 
 # REQUIRED IF DEBUG=FALSE
-export DB_NAME=some_database_name 
-export DB_USERNAME=some_username
-export DB_PASSWORD=some_password
-export DB_HOST=some_host_address
-export DB_PORT=some_port
+export DB_NAME=
+export DB_USERNAME=
+export DB_PASSWORD=
+export DB_HOST=
+export DB_PORT=
 ```
-
 
 Install pipenv
 
@@ -33,6 +35,7 @@ pip install pipenv
 ```
 
 Activate virtual environment and install packages
+
 ```
 pipenv shell
 pipenv install
@@ -59,7 +62,6 @@ Run the following command, and fill in your user information when prompted.
 ```
 ./manage.py createsuperuser
 ```
-
 
 ### Using Docker
 
