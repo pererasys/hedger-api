@@ -13,8 +13,7 @@ class AssetViewSet(viewsets.ViewSet):
 
     def list(self, request):
         query = request.query_params.get("search", "")
-        queryset = Asset.objects.filter(Q(active=True) & (
-            Q(symbol__icontains=query) | Q(name__icontains=query)))
+        queryset = Asset.objects.filter(Q(symbol__icontains=query) | Q(name__icontains=query))
         serializer = ListSerializer(queryset, many=True)
         return Response(serializer.data)
 

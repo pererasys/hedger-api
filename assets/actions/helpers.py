@@ -25,6 +25,13 @@ def paginated_fetch(endpoint, transform, query_params={}, offset=0, initial=[]):
         result = requests.get(f'http://api.marketstack.com/v1{endpoint}', params)
         response = result.json()
 
+        error = response.get('error', None)
+
+        print(error)
+
+        if error:
+            raise Exception
+
         next_offset = offset + response['pagination']['count']
         data = initial + [transform(item) for item in response['data']]
         logger.info(f'Collected {len(data)} items.')
@@ -34,8 +41,11 @@ def paginated_fetch(endpoint, transform, query_params={}, offset=0, initial=[]):
             return paginated_fetch(endpoint=endpoint, query_params=query_params, transform=transform, offset=next_offset, initial=data)
 
         return data
-    except RequestException as e:
-        logger.error('Request for eod data threw an exception, returning initial dataset.')
+    except RequestException:
+        logger.error('Request to marketstack threw an exception, returning initial dataset.')
+        return initial
+    except:
+        logger.error('An unknown error occurred, returning initial dataset.')
         return initial
 
 

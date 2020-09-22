@@ -5,6 +5,7 @@ Copyright 2020
 
 from celery.utils.log import get_task_logger
 from .helpers import paginated_fetch, transform_report, transform_asset
+from datetime import datetime, timedelta
 
 logger = get_task_logger(__name__)
 
@@ -27,4 +28,13 @@ def fetch_assets(exchange):
         "exchange": exchange,
     }
     return paginated_fetch(endpoint="/tickers", transform=transform_asset, query_params=query_params)
+
+
+def fetch_extended_reports(symbol):
+    start_date = datetime.now() - timedelta(days=365)
+    query_params = {
+        "symbols": symbol,
+        "date_from": datetime.strftime(start_date, "%Y-%m-%d")
+    }
+    return paginated_fetch(endpoint="/eod", transform=transform_report, query_params=query_params)
 

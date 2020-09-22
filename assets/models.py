@@ -35,6 +35,11 @@ class Asset(models.Model):
 
     def __str__(self):
         return self.symbol
+    
+    def activate(self):
+        self.active = True
+        self.save()
+        
 
     @property
     def latest_report(self):
