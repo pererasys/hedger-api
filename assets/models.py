@@ -24,7 +24,8 @@ class Exchange(models.Model):
 
 class Asset(models.Model):
     symbol = models.CharField(primary_key=True, max_length=10, unique=True)
-    exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE, related_name="assets")
+    exchange = models.ForeignKey(
+        Exchange, on_delete=models.CASCADE, related_name="assets")
     name = models.CharField(max_length=255, blank=True, null=True)
     active = models.BooleanField(default=False)
 
@@ -35,11 +36,17 @@ class Asset(models.Model):
     def __str__(self):
         return self.symbol
 
+    @property
+    def latest_report(self):
+        latest_reports = self.reports.order_by("-timestamp")
+        if latest_reports.count() > 0:
+            return latest_reports[0]
 
 
 class Report(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="reports")
+    asset = models.ForeignKey(
+        Asset, on_delete=models.CASCADE, related_name="reports")
 
     # EOD data
     open = models.DecimalField(max_digits=9, decimal_places=2)
