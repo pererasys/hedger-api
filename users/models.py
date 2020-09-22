@@ -7,6 +7,7 @@ Copyright 2020
 from django.db import models
 from django.utils.timezone import now
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from assets.models import Asset
 import uuid
 
 
@@ -52,6 +53,7 @@ class UserAccount(AbstractBaseUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
+    watch_list = models.ManyToManyField(Asset, through="WatchedAsset", blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
     admin = models.BooleanField(default=False)
@@ -97,3 +99,17 @@ class UserAccount(AbstractBaseUser):
     @property
     def is_admin(self):
         return self.admin
+
+
+class WatchedAsset(models.Model):
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'watched asset'
+        verbose_name_plural = 'watched assets'
+        unique_together= ['asset', 'user']
+    
+    def __str__(self):
+        return f'{str(self.user)} is watching {str(self.asset)}.'
