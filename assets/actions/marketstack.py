@@ -30,8 +30,12 @@ def fetch_assets(exchange):
     return paginated_fetch(endpoint="/tickers", transform=transform_asset, query_params=query_params)
 
 
-def fetch_extended_reports(symbol):
-    start_date = datetime.now() - timedelta(days=365)
+def fetch_extended_reports(symbol, start_date):
+    if not start_date:
+        start_date = datetime.now() - timedelta(days=365)
+    else:
+        start_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%S%z")
+
     query_params = {
         "symbols": symbol,
         "date_from": datetime.strftime(start_date, "%Y-%m-%d")

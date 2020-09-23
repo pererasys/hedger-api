@@ -27,8 +27,6 @@ def paginated_fetch(endpoint, transform, query_params={}, offset=0, initial=[]):
 
         error = response.get('error', None)
 
-        print(error)
-
         if error:
             raise Exception
 

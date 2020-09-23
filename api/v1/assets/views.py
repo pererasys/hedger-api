@@ -34,7 +34,7 @@ class AssetActivationView(views.APIView):
         asset.activate()
 
         # celery task to fetch last 5 years of data
-        generate_extended_reports.delay(symbol=symbol)
+        generate_extended_reports.delay(symbol=symbol, start_date=asset.latest_report.timestamp)
 
         return Response({"detail": "Successfully activated asset."})
 
@@ -49,6 +49,9 @@ class WatchAssetView(views.APIView):
 
         if asset.watched_by.count() == 0:
             asset.activate()
+            print(asset.latest_report.timestamp)
+            # celery task to fetch last 5 years of data
+            generate_extended_reports.delay(symbol=symbol, start_date=asset.latest_report.timestamp)
 
         user.watch_list.add(asset)
 

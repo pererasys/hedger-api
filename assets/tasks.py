@@ -41,10 +41,10 @@ def generate_tickers(exchange):
 
 
 @app.task(name="generate_extended_reports")
-def generate_extended_reports(symbol):
+def generate_extended_reports(symbol, start_date=None):
     logger.info('Generating daily reports.')
 
-    data = fetch_extended_reports(symbol=symbol)
+    data = fetch_extended_reports(symbol=symbol, start_date=start_date)
 
     logger.info(f'Creating {len(data)} reports.')
     Report.objects.bulk_create(data, ignore_conflicts=True)
