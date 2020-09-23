@@ -39,7 +39,10 @@ class Asset(models.Model):
     def activate(self):
         self.active = True
         self.save()
-        
+    
+    def deactivate(self):
+        self.active = False
+        self.save()
 
     @property
     def latest_report(self):

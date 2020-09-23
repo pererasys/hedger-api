@@ -53,7 +53,7 @@ class UserAccount(AbstractBaseUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
-    watch_list = models.ManyToManyField(Asset, through="WatchedAsset", blank=True)
+    watch_list = models.ManyToManyField(Asset, related_name="watched_by", through="WatchedAsset", blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
     admin = models.BooleanField(default=False)
