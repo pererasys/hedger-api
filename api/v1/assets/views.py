@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, views
 from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 from django.db.models import Q
 from assets.models import Asset
 from assets.tasks import generate_extended_reports
@@ -12,11 +13,32 @@ class AssetViewSet(viewsets.ViewSet):
     A simple ViewSet for listing or retrieving Assets.
     """
 
+    paginator = LimitOffsetPagination()
+
     def list(self, request):
         query = request.query_params.get("search", "")
         queryset = Asset.objects.filter(Q(symbol__icontains=query) | Q(name__icontains=query))
-        serializer = ListSerializer(queryset, many=True)
+        
+
+        page = self.paginator.paginate_queryset(queryset, request)
+
+        if page is not None:
+            serializer = ListSerializer(queryset, many=True)
+            return self.paginator.get_paginated_response(serializer.data)
+
         return Response(serializer.data)
+    
+    def watching(self, request):
+        assets = request.user.watch_list.all()
+
+        page = self.paginator.paginate_queryset(assets, request)
+
+        if page is not None:
+            serializer = ListSerializer(assets, many=True)
+            return self.paginator.get_paginated_response(serializer.data)
+
+        return Response(serializer.data)
+
 
     def retrieve(self, request, symbol=None):
         queryset = Asset.objects.all()
