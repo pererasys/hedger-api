@@ -8,7 +8,7 @@ Python 3.8 required.
 
 **Install TA-Lib C++ core**
 
-Instructions for various operating systems can be found here:
+Instructions for various operating systems can be found here, under "Dependencies":
 
 https://mrjbq7.github.io/ta-lib/install.html.
 
