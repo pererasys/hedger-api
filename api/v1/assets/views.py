@@ -55,8 +55,13 @@ class AssetActivationView(views.APIView):
 
         asset.activate()
 
+        start_date = None
+
+        if asset.latest_report:
+            start_date = asset.latest_report.timestamp
+
         # celery task to fetch last 5 years of data
-        generate_extended_reports.delay(symbol=symbol, start_date=asset.latest_report.timestamp)
+        generate_extended_reports.delay(symbol=symbol, start_date=start_date)
 
         return Response({"detail": "Successfully activated asset."})
 

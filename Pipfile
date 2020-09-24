@@ -12,6 +12,8 @@ gunicorn = "*"
 psycopg2-binary = "*"
 celery = {extras = ["redis"], version = "*"}
 requests = "*"
+ta-lib = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.8"

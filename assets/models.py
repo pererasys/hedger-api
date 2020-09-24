@@ -71,6 +71,8 @@ class Report(models.Model):
     # Indicators
     ema = models.DecimalField(max_digits=9, decimal_places=2, null=True)
     macd = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    macd_signal = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    macd_hist = models.DecimalField(max_digits=9, decimal_places=2, null=True)
     rsi = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
     timestamp = models.DateTimeField()
