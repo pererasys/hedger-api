@@ -6,7 +6,13 @@ Hedger performs stock analysis on companies to predict future performance. This 
 
 Python 3.8 required.
 
-Run the following commands in the root project directory.
+**Install TA-Lib C++ core**
+
+Instructions for various operating systems can be found here:
+
+https://mrjbq7.github.io/ta-lib/install.html.
+
+**Run the following commands in the root project directory.**
 
 ```
 touch .env
@@ -30,7 +36,7 @@ export DB_HOST=
 export DB_PORT=
 ```
 
-Install pipenv
+**Install pipenv**
 
 ```
 pip install pipenv
