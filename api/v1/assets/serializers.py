@@ -54,12 +54,12 @@ class DetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_historical_data(self, obj):
-        request = self.context.get("request", None)
+        params = self.context.get("request").query_params
 
         default_start_date = datetime.strftime(datetime.now() - timedelta(days=365), "%Y-%m-%d")
 
-        start_date = request.query_params.get("start_date", default_start_date)
-        indicators = request.query_params.get("indicators", None)
+        start_date = params.get("start_date", default_start_date)
+        indicators = params.get("indicators", None)
 
         reports = Report.objects.filter(timestamp__gte=start_date).order_by('timestamp')
         res = {

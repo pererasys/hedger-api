@@ -13,4 +13,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "./wait; python manage.py collectstatic --no-input; python manage.py makemigrations; python manage.py migrate; gunicorn hedger.wsgi -b 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py collectstatic --no-input; python manage.py makemigrations; python manage.py migrate; gunicorn hedger.wsgi -b 0.0.0.0:8000"]
