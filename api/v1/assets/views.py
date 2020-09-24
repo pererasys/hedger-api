@@ -43,7 +43,7 @@ class AssetViewSet(viewsets.ViewSet):
     def retrieve(self, request, symbol=None):
         queryset = Asset.objects.all()
         asset = get_object_or_404(queryset, symbol=symbol)
-        serializer = DetailSerializer(asset, context={"request": request})
+        serializer = DetailSerializer(asset, context={"params": request.query_params})
         
         return Response(serializer.data)
 
@@ -61,7 +61,7 @@ class AssetActivationView(views.APIView):
         if asset.latest_report:
             start_date = asset.latest_report.timestamp
 
-        # celery task to fetch last 5 years of data
+        # celery task to fetch data
         generate_extended_reports.delay(symbol=symbol, start_date=start_date)
 
         return Response({"detail": "Successfully activated asset."})
@@ -75,11 +75,16 @@ class WatchAssetView(views.APIView):
 
         asset = get_object_or_404(queryset, symbol=symbol)
 
-        if asset.watched_by.count() == 0:
+        start_date = None
+
+        if asset.latest_report:
+            start_date = asset.latest_report.timestamp
+
+        if asset.watchers.count() == 0:
             asset.activate()
-            print(asset.latest_report.timestamp)
-            # celery task to fetch last 5 years of data
-            generate_extended_reports.delay(symbol=symbol, start_date=asset.latest_report.timestamp)
+
+        # celery task to fetch data
+        generate_extended_reports.delay(symbol=symbol, start_date=start_date)
 
         user.watch_list.add(asset)
 
@@ -95,7 +100,7 @@ class UnwatchAssetView(views.APIView):
         asset = get_object_or_404(queryset, symbol=symbol)
         user.watch_list.remove(asset)
 
-        if asset.watched_by.count() == 0:
+        if asset.watchers.count() == 0:
             asset.deactivate()
 
         return Response({"detail": f'Removed {symbol} from watch list.'})

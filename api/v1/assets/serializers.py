@@ -54,7 +54,7 @@ class DetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_historical_data(self, obj):
-        params = self.context.get("request").query_params
+        params = self.context.get("params")
 
         default_start_date = datetime.strftime(datetime.now() - timedelta(days=365), "%Y-%m-%d")
 
