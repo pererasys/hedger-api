@@ -29,6 +29,8 @@ def generate_daily_reports():
         data = marketstack.fetch_reports(symbols=','.join([asset.symbol for asset in assets]))
         logger.info(f'Creating {len(data)} reports.')
         Report.objects.bulk_create(data, ignore_conflicts=True)
+    else:
+        logger.info(f'Nothing to do, exiting.')
 
 
 @app.task(name="generate_tickers")

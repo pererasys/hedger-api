@@ -43,7 +43,8 @@ class AssetViewSet(viewsets.ViewSet):
     def retrieve(self, request, symbol=None):
         queryset = Asset.objects.all()
         asset = get_object_or_404(queryset, symbol=symbol)
-        serializer = DetailSerializer(asset)
+        serializer = DetailSerializer(asset, context={"request": request})
+        
         return Response(serializer.data)
 
 
