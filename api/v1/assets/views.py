@@ -8,19 +8,16 @@ from assets.tasks import generate_extended_reports
 from .serializers import ListSerializer, DetailSerializer
 
 
-class AssetViewSet(viewsets.ViewSet):
+class AssetViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for listing or retrieving Assets.
     """
-
-    paginator = LimitOffsetPagination()
 
     def list(self, request):
         query = request.query_params.get("search", "")
         queryset = Asset.objects.filter(Q(symbol__icontains=query) | Q(name__icontains=query))
         
-
-        page = self.paginator.paginate_queryset(queryset, request)
+        page = self.paginate_queryset(queryset)
 
         if page is not None:
             serializer = ListSerializer(queryset, many=True)
