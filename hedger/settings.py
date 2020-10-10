@@ -27,7 +27,10 @@ DEBUG = os.environ['DEBUG'] == "True"
 SECRET_KEY = os.environ['SECRET_KEY']
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    # Tunnel
+    '46c25c3bfde0.ngrok.io'
+]
 
 # Application definition
 

@@ -29,13 +29,20 @@ class ReportSerializer(serializers.ModelSerializer):
             'timestamp',
         ]
 
-
 class ListSerializer(serializers.ModelSerializer):
     exchange = serializers.StringRelatedField()
+    last = serializers.ReadOnlyField()
+    percent_change = serializers.ReadOnlyField()
+    is_watching = serializers.SerializerMethodField()
 
     class Meta:
         model = Asset
-        fields = ['symbol', 'name', 'exchange']
+        fields = ['symbol', 'name', 'exchange', 'last', 'percent_change', 'is_watching']
+    
+    def get_is_watching(self, obj):
+        user = self.context.get('user')
+        return obj in user.watch_list.all()
+    
 
 
 class DetailSerializer(serializers.ModelSerializer):
