@@ -17,8 +17,8 @@ class AssetViewSet(viewsets.ViewSet):
 
     def list(self, request):
         query = request.query_params.get("search", "")
-        queryset = Asset.objects.filter(Q(symbol__icontains=query) | Q(name__icontains=query))
-        
+        queryset = Asset.objects.filter(
+            Q(symbol__icontains=query) | Q(name__icontains=query))
 
         page = self.paginator.paginate_queryset(queryset, request)
 
@@ -27,7 +27,7 @@ class AssetViewSet(viewsets.ViewSet):
             return self.paginator.get_paginated_response(serializer.data)
 
         return Response(serializer.data)
-    
+
     def watching(self, request):
         assets = request.user.watch_list.all()
 
@@ -39,12 +39,12 @@ class AssetViewSet(viewsets.ViewSet):
 
         return Response(serializer.data)
 
-
     def retrieve(self, request, symbol=None):
         queryset = Asset.objects.all()
         asset = get_object_or_404(queryset, symbol=symbol)
-        serializer = DetailSerializer(asset, context={"params": request.query_params})
-        
+        serializer = DetailSerializer(
+            asset, context={"params": request.query_params})
+
         return Response(serializer.data)
 
 
@@ -104,4 +104,3 @@ class UnwatchAssetView(views.APIView):
             asset.deactivate()
 
         return Response({"detail": f'Removed {symbol} from watch list.'})
-            
