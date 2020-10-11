@@ -3,27 +3,27 @@ from rest_framework import viewsets, views
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 from django.db.models import Q
+from django.db.models import Count
 from assets.models import Asset
 from assets.tasks import generate_extended_reports
 from .serializers import ListSerializer, DetailSerializer
 
 
-class AssetViewSet(viewsets.ViewSet):
+class AssetViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for listing or retrieving Assets.
     """
 
-    paginator = LimitOffsetPagination()
-
     def list(self, request):
-        query = request.query_params.get("search", "")
-        queryset = Asset.objects.filter(
-            Q(symbol__icontains=query) | Q(name__icontains=query))
+        query = request.query_params.get("query", "")
+        queryset = Asset.objects.filter(Q(symbol__istartswith=query) | Q(
+            name__istartswith=query)).annotate(symbol_count=Count('symbol')).order_by('symbol_count')
 
-        page = self.paginator.paginate_queryset(queryset, request)
+        page = self.paginate_queryset(queryset)
 
         if page is not None:
-            serializer = ListSerializer(queryset, many=True)
+            serializer = ListSerializer(
+                page, many=True, context={'user': request.user})
             return self.paginator.get_paginated_response(serializer.data)
 
         return Response(serializer.data)
@@ -34,7 +34,8 @@ class AssetViewSet(viewsets.ViewSet):
         page = self.paginator.paginate_queryset(assets, request)
 
         if page is not None:
-            serializer = ListSerializer(assets, many=True)
+            serializer = ListSerializer(
+                assets, many=True, context={'user': request.user})
             return self.paginator.get_paginated_response(serializer.data)
 
         return Response(serializer.data)

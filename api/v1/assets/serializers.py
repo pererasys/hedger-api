@@ -29,13 +29,20 @@ class ReportSerializer(serializers.ModelSerializer):
             'timestamp',
         ]
 
-
 class ListSerializer(serializers.ModelSerializer):
     exchange = serializers.StringRelatedField()
+    last = serializers.ReadOnlyField()
+    percent_change = serializers.ReadOnlyField()
+    is_watching = serializers.SerializerMethodField()
 
     class Meta:
         model = Asset
-        fields = ['symbol', 'name', 'exchange']
+        fields = ['symbol', 'name', 'exchange', 'last', 'percent_change', 'is_watching']
+    
+    def get_is_watching(self, obj):
+        user = self.context.get('user')
+        return obj in user.watch_list.all()
+    
 
 
 class DetailSerializer(serializers.ModelSerializer):
@@ -61,7 +68,7 @@ class DetailSerializer(serializers.ModelSerializer):
         start_date = params.get("start_date", default_start_date)
         indicators = params.get("indicators", None)
 
-        reports = Report.objects.filter(timestamp__gte=start_date).order_by('timestamp')
+        reports = obj.reports.filter(timestamp__gte=start_date).order_by('timestamp')
         res = {
             "pps": [{"value": report.close, "timestamp": report.timestamp} for report in reports],
         }
