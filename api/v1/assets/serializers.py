@@ -49,9 +49,7 @@ class ListSerializer(serializers.ModelSerializer):
 
 class DetailSerializer(serializers.ModelSerializer):
     exchange = ExchangeSerializer(read_only=True)
-    latest_report = ReportSerializer(read_only=True)
-    percent_change = serializers.ReadOnlyField()
-    historical_data = serializers.SerializerMethodField()
+    reports = serializers.SerializerMethodField()
     is_watching = serializers.SerializerMethodField()
 
     class Meta:
@@ -60,49 +58,15 @@ class DetailSerializer(serializers.ModelSerializer):
             'symbol',
             'name',
             'exchange',
-            'latest_report',
-            'historical_data',
+            'reports',
             'is_watching',
-            'percent_change'
         ]
 
     def get_is_watching(self, obj):
         user = self.context.get('user')
         return obj in user.watch_list.all()
 
-    def get_historical_data(self, obj):
-        params = self.context.get("params")
-
-        start_date = timezone.now() - timedelta(days=365)
-
-        indicators = params.get("indicators", None)
-
-        reports = obj.reports.filter(timestamp__gte=start_date).order_by('-timestamp')
-
-        if reports.count() == 0:
-            return None
-
-        res = {
-            "1y": [{"value": report.close, "timestamp": report.timestamp} for report in reports],
-            "6m": [{"value": report.close, "timestamp": report.timestamp} for report in reports.filter(timestamp__gte=start_date + timedelta(days=182))],
-            "1m": [{"value": report.close, "timestamp": report.timestamp} for report in reports.filter(timestamp__gte=start_date + timedelta(days=337))],
-        }
-
-        # Build indicator data
-        if indicators:
-            indicators = indicators.split(',')
-
-            if "ema" in indicators:
-                res['ema'] = [report.ema for report in reports]
-
-            if "rsi" in indicators:
-                res['rsi'] = [report.rsi for report in reports]
-
-            if "macd" in indicators:
-                res['macd'] = {
-                    "value": [report.macd for report in reports],
-                    "signal": [report.macd_signal for report in reports],
-                    "histogram": [report.macd_hist for report in reports],
-                }
-            
-        return res
+    def get_reports(self, obj):
+        reports = obj.reports.filter(timestamp__gte=timezone.now() - timedelta(days=365)).order_by('-timestamp')
+        serializer = ReportSerializer(reports, many=True, read_only=True)
+        return serializer.data

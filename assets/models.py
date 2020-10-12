@@ -61,8 +61,8 @@ class Asset(models.Model):
         reports = self.reports.all().order_by('-timestamp')
         if reports.count() > 1:
             reports = reports[:2]
-            diff = reports[1].close - reports[0].close
-            return round((diff / reports[0].close) * 10**2, 2)
+            diff = reports[0].close - reports[1].close
+            return round((diff / reports[1].close) * 10**2, 2)
 
 
 class Report(models.Model):
