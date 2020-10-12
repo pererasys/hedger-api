@@ -28,6 +28,11 @@ class ReportSerializer(serializers.ModelSerializer):
             'adj_low',
             'adj_close',
             'adj_volume',
+            'macd',
+            'macd_hist',
+            'macd_signal',
+            'ema',
+            'rsi',
             'timestamp',
         ]
 
