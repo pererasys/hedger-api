@@ -28,6 +28,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 
 ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
     # Tunnel
     '46c25c3bfde0.ngrok.io'
 ]
