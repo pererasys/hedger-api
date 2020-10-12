@@ -16,7 +16,7 @@ class AssetViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         query = request.query_params.get("query", "")
-        queryset = Asset.objects.filter(Q(symbol__istartswith=query) | Q(name__istartswith=query)).annotate(symbol_count=Count('symbol')).order_by('symbol_count')
+        queryset = Asset.objects.filter(Q(symbol__istartswith=query) | Q(name__istartswith=query)).annotate(symbol_count=Count('symbol')).order_by('-symbol_count')
         
         page = self.paginate_queryset(queryset)
 
@@ -32,7 +32,7 @@ class AssetViewSet(viewsets.ModelViewSet):
         page = self.paginator.paginate_queryset(assets, request)
 
         if page is not None:
-            serializer = ListSerializer(assets, many=True, context={'user': request.user})
+            serializer = DetailSerializer(assets, many=True, context={"user": request.user, "params": request.query_params})
             return self.paginator.get_paginated_response(serializer.data)
 
         return Response(serializer.data)
@@ -41,7 +41,7 @@ class AssetViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, symbol=None):
         queryset = Asset.objects.all()
         asset = get_object_or_404(queryset, symbol=symbol)
-        serializer = DetailSerializer(asset, context={"params": request.query_params})
+        serializer = DetailSerializer(asset, context={"user": request.user, "params": request.query_params})
         
         return Response(serializer.data)
 

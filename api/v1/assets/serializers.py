@@ -1,6 +1,8 @@
 from rest_framework import serializers, exceptions
 from assets.models import Exchange, Asset, Report
-from datetime import datetime, timedelta
+from django.utils import timezone
+from datetime import timedelta
+import pytz
 
 
 class ExchangeSerializer(serializers.ModelSerializer):
@@ -48,7 +50,9 @@ class ListSerializer(serializers.ModelSerializer):
 class DetailSerializer(serializers.ModelSerializer):
     exchange = ExchangeSerializer(read_only=True)
     latest_report = ReportSerializer(read_only=True)
+    percent_change = serializers.ReadOnlyField()
     historical_data = serializers.SerializerMethodField()
+    is_watching = serializers.SerializerMethodField()
 
     class Meta:
         model = Asset
@@ -57,22 +61,32 @@ class DetailSerializer(serializers.ModelSerializer):
             'name',
             'exchange',
             'latest_report',
-            'historical_data'
+            'historical_data',
+            'is_watching',
+            'percent_change'
         ]
+
+    def get_is_watching(self, obj):
+        user = self.context.get('user')
+        return obj in user.watch_list.all()
 
     def get_historical_data(self, obj):
         params = self.context.get("params")
 
-        default_start_date = datetime.strftime(datetime.now() - timedelta(days=365), "%Y-%m-%d")
+        start_date = timezone.now() - timedelta(days=365)
 
-        start_date = params.get("start_date", default_start_date)
         indicators = params.get("indicators", None)
 
-        reports = obj.reports.filter(timestamp__gte=start_date).order_by('timestamp')
-        res = {
-            "pps": [{"value": report.close, "timestamp": report.timestamp} for report in reports],
-        }
+        reports = obj.reports.filter(timestamp__gte=start_date).order_by('-timestamp')
 
+        if reports.count() == 0:
+            return None
+
+        res = {
+            "1y": [{"value": report.close, "timestamp": report.timestamp} for report in reports],
+            "6m": [{"value": report.close, "timestamp": report.timestamp} for report in reports.filter(timestamp__gte=start_date + timedelta(days=182))],
+            "1m": [{"value": report.close, "timestamp": report.timestamp} for report in reports.filter(timestamp__gte=start_date + timedelta(days=337))],
+        }
 
         # Build indicator data
         if indicators:
@@ -88,7 +102,7 @@ class DetailSerializer(serializers.ModelSerializer):
                 res['macd'] = {
                     "value": [report.macd for report in reports],
                     "signal": [report.macd_signal for report in reports],
-                    "histagram": [report.macd_hist for report in reports],
+                    "histogram": [report.macd_hist for report in reports],
                 }
             
         return res
