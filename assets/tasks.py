@@ -9,6 +9,7 @@ from celery.decorators import periodic_task, task
 from celery.schedules import crontab
 from .actions import marketstack
 from .models import Asset, Report
+from datetime import datetime, timedelta
 import numpy as np
 import talib
 
@@ -16,7 +17,7 @@ logger = get_task_logger(__name__)
 
 
 @periodic_task(
-    run_every=(crontab(hour=0, minute=0)), # Run at midnight
+    run_every=(crontab(hour=0, minute=0)),  # Run at midnight
     name="generate_daily_reports",
     ignore_result=True
 )
@@ -26,7 +27,22 @@ def generate_daily_reports():
     assets = Asset.objects.filter(active=True)
 
     if assets.count() > 0:
-        data = marketstack.fetch_reports(symbols=','.join([asset.symbol for asset in assets]))
+        data = marketstack.fetch_reports(
+            symbols=','.join([asset.symbol for asset in assets]))
+        '''
+        prev_report_start = datetime.datetime.now() - datetime.timedelta(days=30)
+
+        previous_reports = Report.objects.filter(
+            asset__in=assets, timestamp__gte=prev_report_start)
+
+        close = [report.close for report in previous_reports]
+        close = np.array(close)[::-1]
+
+        rsi = talib.RSI(close, timeperiod=14)
+        ema = talib.EMA(close, timeperiod=30)
+        macd, macd_signal, macd_hist = talib.MACD(
+            close, fastperiod=12, slowperiod=26, signalperiod=9)
+        '''
         logger.info(f'Creating {len(data)} reports.')
         Report.objects.bulk_create(data, ignore_conflicts=True)
     else:
@@ -48,14 +64,16 @@ def generate_tickers(exchange):
 def generate_extended_reports(symbol, start_date=None):
     logger.info('Generating daily reports.')
 
-    data = marketstack.fetch_extended_reports(symbol=symbol, start_date=start_date)
+    data = marketstack.fetch_extended_reports(
+        symbol=symbol, start_date=start_date)
 
     close = [report.close for report in data]
     close = np.array(close)[::-1]
-    
+
     rsi = talib.RSI(close, timeperiod=14)
     ema = talib.EMA(close, timeperiod=30)
-    macd, macd_signal, macd_hist = talib.MACD(close, fastperiod=12, slowperiod=26, signalperiod=9)
+    macd, macd_signal, macd_hist = talib.MACD(
+        close, fastperiod=12, slowperiod=26, signalperiod=9)
 
     i = len(data) - 1
     for report in data:

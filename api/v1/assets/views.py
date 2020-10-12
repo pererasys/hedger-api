@@ -21,11 +21,12 @@ class AssetViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(queryset)
 
         if page is not None:
-            serializer = ListSerializer(page, many=True, context={'user': request.user})
+            serializer = ListSerializer(
+                page, many=True, context={'user': request.user})
             return self.paginator.get_paginated_response(serializer.data)
 
         return Response(serializer.data)
-    
+
     def watching(self, request):
         assets = request.user.watch_list.all()
 
@@ -36,7 +37,6 @@ class AssetViewSet(viewsets.ModelViewSet):
             return self.paginator.get_paginated_response(serializer.data)
 
         return Response(serializer.data)
-
 
     def retrieve(self, request, symbol=None):
         queryset = Asset.objects.all()
@@ -102,4 +102,3 @@ class UnwatchAssetView(views.APIView):
             asset.deactivate()
 
         return Response({"detail": f'Removed {symbol} from watch list.'})
-            
