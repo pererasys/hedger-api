@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.db.models import Count
 from assets.models import Asset
 from assets.tasks import generate_extended_reports
-from .serializers import ListSerializer, DetailSerializer
+from .serializers import ListSerializer, DetailSerializer, WatchedAssetSerializer
 
 
 class AssetViewSet(viewsets.ModelViewSet):
@@ -33,7 +33,7 @@ class AssetViewSet(viewsets.ModelViewSet):
         page = self.paginator.paginate_queryset(assets, request)
 
         if page is not None:
-            serializer = ListSerializer(assets, many=True, context={"user": request.user})
+            serializer = WatchedAssetSerializer(assets, many=True, context={"user": request.user})
             return self.paginator.get_paginated_response(serializer.data)
 
         return Response(serializer.data)

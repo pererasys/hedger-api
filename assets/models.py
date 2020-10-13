@@ -44,6 +44,9 @@ class Asset(models.Model):
         self.active = False
         self.save()
 
+    def is_user_watching(self, user):
+        return self in user.watch_list.all()
+
     @property
     def latest_report(self):
         latest_reports = self.reports.order_by("-timestamp")
