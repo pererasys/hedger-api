@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from api.v1.users.serializers import UserSerializer
 from .serializers import LoginSerializer, TokenSerializer
 
 
@@ -26,8 +27,9 @@ class LoginView(APIView):
 
         token, created = Token.objects.get_or_create(user=serializer.validated_data)
         token_serializer = TokenSerializer(instance=token)
+        user_serializer = UserSerializer(instance=serializer.validated_data)
 
-        return Response(token_serializer.data, status=status.HTTP_200_OK)
+        return Response({"token": token_serializer.data, "user": user_serializer.data}, status=status.HTTP_200_OK)
 
 
 class LogoutView(APIView):
